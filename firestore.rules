@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/lessonProgress/{lessonId} {
+      function ownsProgress() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+      function validCompletion() {
+        let exercises = {
+          'tabuleiro-coordenadas': 2,
+          'peao-promocao': 3,
+          'cavalo': 2,
+          'dama-torres-bispos': 3,
+          'rei-roque': 2,
+          'xeque-defesas': 2,
+          'mate-pastor': 2,
+          'cravada-garfo': 2,
+          'trocas-material': 2,
+          'partida-guiada': 2
+        };
+        let data = request.resource.data;
+        return lessonId in exercises
+          && data.keys().hasOnly(['status', 'completedAt', 'exerciseCount', 'reviewCorrect', 'contentVersion'])
+          && data.status == 'completed'
+          && data.completedAt == request.time
+          && data.exerciseCount == exercises[lessonId]
+          && data.reviewCorrect == true
+          && data.contentVersion == 1;
+      }
+      allow read: if ownsProgress();
+      allow create: if ownsProgress() && validCompletion();
+      allow update: if ownsProgress() && resource.data.status != 'completed' && validCompletion();
+      allow delete: if false;
+    }
+  }
+}
