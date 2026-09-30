@@ -1,4 +1,5 @@
-﻿import AppRouter from './Routes/AppRouter';
+import './App.css';
+import AppRouter from './Routes/AppRouter';
 
 // Componente raiz que entrega a aplicação ao roteador principal.
 export default function App() {

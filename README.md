@@ -1,6 +1,6 @@
 # XadrezEdu
 
-Aplicação web, para a matéria de software Educativo, com objetivo de  aprender xadrez com explicações, exercícios interativos e acompanhamento individual de progresso. A trilha reúne dez lições em dois módulos, dos fundamentos do tabuleiro até uma partida guiada.
+Aplicação web (MVP), para a matéria de software Educativo, com objetivo de  aprender xadrez com explicações, exercícios interativos e acompanhamento individual de progresso. A trilha reúne dez lições em dois módulos, dos fundamentos do tabuleiro até uma partida guiada.
 
 O frontend usa React e TypeScript. O Firebase Authentication gerencia as contas e o Cloud Firestore armazena as conclusões das lições.
 
@@ -14,6 +14,7 @@ O frontend usa React e TypeScript. O Firebase Authentication gerencia as contas 
 - [Rotas](#rotas)
 - [Conclusão e progresso individual](#conclusão-e-progresso-individual)
 - [Estrutura do projeto](#estrutura-do-projeto)
+- [Design system](#design-system)
 - [Comandos e validação](#comandos-e-validação)
 - [Adicionar ou alterar lições](#adicionar-ou-alterar-lições)
 - [Publicação](#publicação)
@@ -45,7 +46,9 @@ Versões declaradas no [package.json](package.json). As versões resolvidas est�
 | Firebase | ^12.19.0 | Authentication, Firestore e Analytics |
 | chess.js | ^1.4.0 | Regras e validação dos lances |
 | ESLint | ^10.10.0 | Análise estática |
-| Node.js Test Runner | Integrado ao Node.js | Testes das lições e do progresso |
+| Vitest / Coverage V8 | ^5.0.3 | Execução de testes e relatório de cobertura |
+| React Testing Library / user-event | ^16.3.3 / ^14.6.7 | Renderização e interações nos testes |
+| jsdom | ^30.1.1 | Ambiente DOM para os testes |
 
 ## Executar localmente
 
@@ -257,13 +260,46 @@ src/
   types/lesson.ts               Tipos de conteúdo e progresso
   App.tsx                       Componente raiz
   main.tsx                      Entrada do frontend
-tests/                          Testes de exercícios e progresso
+test/                           Testes de componentes, hooks e regras de domínio
+vitest.config.ts                Ambiente de testes e configuração de cobertura
 public/                         Arquivos públicos
 docs/progresso.md               Notas sobre lições e persistência
 .env.example                    Modelo das variáveis de ambiente
 .firebaserc                     Projeto Firebase usado pela CLI
 firebase.json                   Configuração de publicação das regras
 firestore.rules                 Regras de acesso ao progresso
+```
+
+## Design system
+
+O arquivo [src/App.css](src/App.css), importado por `App.tsx`, concentra o tema e as primitivas visuais compartilhadas. Os estilos locais consomem suas variáveis CSS; não precisam redefinir a paleta em cada tela.
+
+| Grupo | Variáveis principais |
+| --- | --- |
+| Marca | `--primary`, `--primary-container`, `--on-primary`, `--secondary` |
+| Superfícies e texto | `--surface`, `--surface-container-lowest`, `--on-surface`, `--muted`, `--border` |
+| Tipografia | `--font-brand`, `--font-system`, `--font-lesson`, `--text-base`, `--text-lg`, `--weight-bold` |
+| Espaçamentos | `--space-1` até `--space-12` |
+| Bordas e dimensões | `--radius-sm`, `--radius-md`, `--radius-lg`, `--container-wide`, `--header-height` |
+| Estados | `--color-error`, `--color-success`, `--color-focus`, `--opacity-disabled` |
+| Sombras e movimento | `--shadow-card`, `--shadow-button`, `--duration-fast`, `--duration-normal` |
+| Tabuleiro | `--board-light`, `--board-dark`, `--board-selected`, `--board-legal` |
+
+Para mudar a cor principal, edite `--primary` no `:root` de `App.css`. Os botões, links e controles que usam esse token recebem a mudança. Ajuste também as variantes de marca, como `--primary-container` e `--primary-shadow`, quando mudar toda a paleta.
+
+`App.css` também compartilha a base dos botões de ação, mensagens de estado e controles dos formulários desktop/mobile. Os arquivos CSS de cada componente mantêm layout, posicionamento, breakpoints e diferenças específicas da tela. `index.css` contém somente a estrutura mínima do documento.
+
+Em novos estilos, prefira os tokens existentes:
+
+```css
+.novo-card {
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  box-shadow: var(--shadow-card);
+}
 ```
 
 ## Comandos e validação
@@ -275,14 +311,53 @@ firestore.rules                 Regras de acesso ao progresso
 | `npm run build` | Verifica TypeScript e gera `dist/` |
 | `npm run preview` | Serve o build para inspeção local |
 | `npm run lint` | Executa o ESLint |
+| `npm test` | Executa toda a suíte uma vez |
+| `npm run test:watch` | Reexecuta testes durante o desenvolvimento |
+| `npm run test:coverage` | Executa a suíte e gera relatórios de cobertura |
 
 Para executar os testes com Node.js 24:
 
 ```sh
-node --test tests/chessLessons.test.mjs tests/lessonProgress.test.mjs
+npm test
+npm run test:coverage
 ```
 
-Não há script `npm test` definido. Os testes verificam as soluções das lições, posições de mate, roque, promoção, en passant e cálculos do progresso. Eles não validam autenticação real, regras no emulador ou gravação no Firebase remoto.
+O Vitest usa React Testing Library, user-event, jest-dom e jsdom. A configuração compartilha os plugins do Vite e executa os arquivos `test/**/*.test.{ts,tsx,mjs}`. Os testes de domínio existentes também foram migrados para o Vitest.
+
+### Organização dos testes
+
+| Arquivo em `test/` | Comportamentos verificados |
+| --- | --- |
+| `App.test.tsx` | Integração do componente raiz com roteador e login |
+| `AppRouter.test.tsx` | Carregamento da sessão, rotas protegidas, redirecionamentos, logout e erro |
+| `LoginPage.test.tsx` | Seleção mobile/desktop, mudança de viewport e limpeza da assinatura |
+| `LoginForms.test.tsx` | Ambos os formulários reais: login, cadastro, Google, recuperação, persistência, senha, erros e bloqueio de envios duplicados |
+| `DashboardHeader.test.tsx` | Conta, navegação, menu, foco, logout, falha e nova tentativa |
+| `HomePage.test.tsx` | Progresso vazio, parcial e completo; carregamento, erro e repetição |
+| `InteractiveBoard.test.tsx` | Coordenadas, movimentos, respostas guiadas, promoção, teclado, dicas, reinício e bloqueio |
+| `LessonPage.test.tsx` | Resolução e revisão reais, conclusão por UID, confirmação do servidor, preservação da data, falha de permissão e modo sem conexão |
+| `useLessonProgress.test.ts` | Assinatura por UID, troca de conta, metadados, filtragem, erros e limpeza |
+| `firebaseErrors.test.ts` | Tradução de erros de autenticação e progresso |
+| `chessLessons.test.mjs` | Soluções das lições, mates, roque, promoção e en passant |
+| `lessonProgress.test.mjs` | Filtragem e cálculos de progresso |
+
+Todos os componentes React possuem testes. O componente interno `Lesson` é exercitado pela página `LessonPage`, e o hook `useLoginForm` é exercitado pelos dois formulários reais.
+
+O arquivo `test/setup.ts` limpa o DOM entre os testes e substitui a inicialização do Firebase. Os testes simulam as operações do SDK sem utilizar credenciais do `.env` ou gravar no projeto remoto. Eles não validam autenticação real nem regras no emulador.
+
+### Cobertura e manutenção
+
+`npm run test:coverage` gera o relatório HTML em `coverage/index.html` e o arquivo `coverage/lcov.info`. O diretório é ignorado pelo Git. A configuração exige no mínimo 90% de cobertura global em linhas, instruções, funções e ramificações.
+
+O relatório inclui o código de `src/`, exceto a entrada `main.tsx`, os tipos e a inicialização externa em `src/firebase/firebase.ts`. Essa exclusão não retira componentes da medição. Os arquivos TypeScript de teste também são verificados pelo build e pelo lint.
+
+Para executar somente uma suíte:
+
+```sh
+npm test -- test/LessonPage.test.tsx
+```
+
+Ao adicionar um componente, crie um teste que verifique seus comportamentos observáveis e cenários de falha relevantes. Prefira consultas por papel e nome acessível, usando `user-event` para interações.
 
 Para verificar a integração, entre em uma conta, resolva uma lição, salve e recarregue o dashboard. Confira a persistência e, em outra conta, a independência dos indicadores. Esse teste exige Firebase configurado e acessível.
 

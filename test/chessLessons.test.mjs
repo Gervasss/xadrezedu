@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { lessonContent } from '../src/Pages/Lessons/lessonContent.ts';
 import { createExerciseGame, playCoordinateMove } from '../src/Pages/Lessons/chessExercises.ts';

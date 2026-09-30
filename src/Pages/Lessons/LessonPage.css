@@ -1,61 +1,326 @@
 .lesson-page {
-  max-width: 1120px; margin: 0 auto; padding: 5.5rem 1.5rem 1.5rem; color: #131b2e; font-family: system-ui, sans-serif;
-  * { box-sizing: border-box; }
-  a { color: #2a14b4; font-weight: 600; }
-  button, input { font: inherit; }
-  button, a { touch-action: manipulation; }
-  button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid #8675ee; outline-offset: 3px; }
-  button:disabled { cursor: default; }
-  .lesson-header { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 1.5rem; font-size: 13px; }
-  .lesson-header span { color: #606071; }
-  .lesson-intro { background: #f2f3ff; border: 1px solid #e2e7ff; padding: 2rem; border-radius: 1rem; }
-  .lesson-eyebrow { color: #2a14b4; text-transform: uppercase; letter-spacing: .07em; font-size: 12px; font-weight: 700; }
-  h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.2; margin: .75rem 0 1.5rem; }
-  h2 { font-size: 23px; margin: .75rem 0 1rem; }
-  p { line-height: 1.7; margin: 0 0 1rem; }
-  .lesson-intro p:last-child { margin-bottom: 0; }
-  .lesson-practice { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; margin: 2rem 0; align-items: start; }
-  .exercise-copy { padding: 1rem 0; }
-  .exercise-copy progress { width: 100%; height: 8px; accent-color: #006c49; margin: .5rem 0 1rem; }
-  .lesson-note, .board-help { color: #606071; font-size: 13px; }
-  .lesson-primary { border: none; padding: .8rem 1.2rem; border-radius: .65rem; background: #2a14b4; color: #fff; font-weight: 600; cursor: pointer; margin-top: 1rem; }
-  .lesson-primary:disabled { opacity: .5; }
-  .board-turn { font-weight: 700; font-size: 14px; color: #2a14b4; }
-  .interactive-board { display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; width: 100%; border: 5px solid #34304f; border-radius: .4rem; overflow: hidden; }
-  .board-square { border: 0; position: relative; display: grid; place-items: center; padding: 0; min-width: 0; aspect-ratio: 1; cursor: pointer; }
-  .board-square.light { background: #eeebf8; color: #38314f; }
-  .board-square.dark { background: #8475ad; color: #fff; }
-  .board-square.selected { background: #e2c662; }
-  .board-square.legal { box-shadow: inset 0 0 0 3px #087e59; }
-  .board-square:focus-visible { outline-offset: -4px; z-index: 1; outline-color: #ffb700; }
-  .board-square:disabled { opacity: 1; }
-  .chess-piece { font-family: 'Segoe UI Symbol', 'Arial Unicode MS', serif; font-size: clamp(26px, 5vw, 52px); line-height: 1; z-index: 1; }
-  .white-piece { color: #fff; text-shadow: 0 1px 2px #111, 1px 0 #111, -1px 0 #111; }
-  .black-piece { color: #171425; text-shadow: 0 1px 1px #fff8; }
-  .rank-label, .file-label { position: absolute; font-size: 10px; font-weight: 700; line-height: 1; }
-  .rank-label { top: 3px; left: 3px; }
-  .file-label { bottom: 3px; right: 3px; }
-  .move-dot { width: 24%; height: 24%; border-radius: 50%; background: #087e5966; }
-  .board-help { margin: .75rem 0; }
-  .board-tools { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .board-tools button { border: 1px solid #d2cbe6; background: #fff; color: #2a14b4; border-radius: .5rem; padding: .5rem .75rem; cursor: pointer; }
-  .lesson-hint { padding: .75rem; background: #fff6d9; border-radius: .5rem; margin-top: 1rem; font-size: 14px; }
-  .board-feedback { margin-top: 1rem; font-size: 14px; min-height: 3rem; }
-  .success, .review-correct { color: #006c49; }
-  .lesson-review { padding: 1.5rem; border: 1px solid #e2e7ff; border-radius: 1rem; margin: 1.5rem 0; background: #faf8ff; }
-  fieldset { border: 0; padding: 0; margin: 0 0 1rem; }
-  legend { margin-bottom: 1rem; font-weight: 600; }
-  .review-option { display: flex; align-items: center; gap: .75rem; padding: .8rem; margin: .5rem 0; border: 1px solid #e2e7ff; border-radius: .5rem; background: #fff; cursor: pointer; }
-  .review-option input { accent-color: #2a14b4; }
-  .review-incorrect { color: #a52b28; margin-top: 1rem; }
-  .lesson-saved { background: #e6f5ed; padding: 1rem; border-radius: .75rem; }
-  .lesson-saved h3 { margin-top: 0; }
-  .lesson-next-links { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-  @media (max-width: 767px) {
-    padding: 5rem 1rem 1rem;
-    .lesson-header { flex-direction: column; }
-    .lesson-intro { padding: 1.25rem; }
-    .lesson-practice { grid-template-columns: 1fr; gap: .5rem; }
-    .chess-piece { font-size: clamp(26px, 8vw, 48px); }
+  max-width: var(--container-content);
+  margin: 0 auto;
+  padding: 5.5rem var(--space-6) var(--space-6);
+  color: var(--on-surface);
+  font-family: var(--font-lesson);
+  * {
+    box-sizing: border-box;
   }
+
+  a {
+    color: var(--primary);
+    font-weight: var(--weight-semibold);
+  }
+
+  button, input {
+    font: inherit;
+  }
+
+  button, a {
+    touch-action: manipulation;
+  }
+
+  button:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 3px solid var(--color-focus-lesson);
+    outline-offset: 3px;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  .lesson-header {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-6);
+    font-size: var(--text-caption);
+  }
+
+  .lesson-header span {
+    color: var(--muted);
+  }
+
+  .lesson-intro {
+    background: var(--surface-container-low);
+    border: 1px solid var(--surface-container-high);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+  }
+
+  .lesson-eyebrow {
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+  }
+
+  h1 {
+    font-size: var(--text-lesson-title);
+    line-height: var(--leading-heading);
+    margin: var(--space-3) 0 var(--space-6);
+  }
+
+  h2 {
+    font-size: var(--text-lesson-heading);
+    margin: var(--space-3) 0 var(--space-4);
+  }
+
+  p {
+    line-height: var(--leading-reading);
+    margin: 0 0 var(--space-4);
+  }
+
+  .lesson-intro p:last-child {
+    margin-bottom: 0;
+  }
+
+  .lesson-practice {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--space-8);
+    margin: var(--space-8) 0;
+    align-items: start;
+  }
+
+  .exercise-copy {
+    padding: var(--space-4) 0;
+  }
+
+  .exercise-copy progress {
+    width: 100%;
+    height: 8px;
+    accent-color: var(--secondary);
+    margin: var(--space-2) 0 var(--space-4);
+  }
+
+  .lesson-note, .board-help {
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+
+  .lesson-primary {
+    padding: .8rem 1.2rem;
+    border-radius: var(--radius-button);
+    font-weight: var(--weight-semibold);
+    margin-top: var(--space-4);
+  }
+
+  .lesson-primary:disabled {
+    opacity: var(--opacity-disabled-lesson);
+  }
+
+  .board-turn {
+    font-weight: var(--weight-bold);
+    font-size: var(--text-base);
+    color: var(--primary);
+  }
+
+  .interactive-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    aspect-ratio: 1;
+    width: 100%;
+    border: 5px solid var(--board-border);
+    border-radius: var(--radius-board);
+    overflow: hidden;
+  }
+
+  .board-square {
+    border: 0;
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    min-width: 0;
+    aspect-ratio: 1;
+    cursor: pointer;
+  }
+
+  .board-square.light {
+    background: var(--board-light);
+    color: var(--board-light-text);
+  }
+
+  .board-square.dark {
+    background: var(--board-dark);
+    color: var(--on-primary);
+  }
+
+  .board-square.selected {
+    background: var(--board-selected);
+  }
+
+  .board-square.legal {
+    box-shadow: var(--shadow-board-legal);
+  }
+
+  .board-square:focus-visible {
+    outline-offset: -4px;
+    z-index: 1;
+    outline-color: var(--board-focus);
+  }
+
+  .board-square:disabled {
+    opacity: var(--opacity-disabled);
+  }
+
+  .chess-piece {
+    font-family: var(--font-chess);
+    font-size: var(--text-chess);
+    line-height: 1;
+    z-index: 1;
+  }
+
+  .white-piece {
+    color: var(--board-piece-light);
+    text-shadow: var(--shadow-piece-light);
+  }
+
+  .black-piece {
+    color: var(--board-piece-dark);
+    text-shadow: var(--shadow-piece-dark);
+  }
+
+  .rank-label, .file-label {
+    position: absolute;
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+  }
+
+  .rank-label {
+    top: 3px;
+    left: 3px;
+  }
+
+  .file-label {
+    bottom: 3px;
+    right: 3px;
+  }
+
+  .move-dot {
+    width: 24%;
+    height: 24%;
+    border-radius: var(--radius-round);
+    background: var(--board-move-dot);
+  }
+
+  .board-help {
+    margin: var(--space-3) 0;
+  }
+
+  .board-tools {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .board-tools button {
+    border: 1px solid var(--board-tool-border);
+    background: var(--surface-container-lowest);
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+  }
+
+  .lesson-hint {
+    padding: var(--space-3);
+    background: var(--color-hint-surface);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-4);
+    font-size: var(--text-base);
+  }
+
+  .board-feedback {
+    margin-top: var(--space-4);
+    font-size: var(--text-base);
+    min-height: 3rem;
+  }
+
+  .success, .review-correct {
+    color: var(--secondary);
+  }
+
+  .lesson-review {
+    padding: var(--space-6);
+    border: 1px solid var(--surface-container-high);
+    border-radius: var(--radius-lg);
+    margin: var(--space-6) 0;
+    background: var(--background);
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0 0 var(--space-4);
+  }
+
+  legend {
+    margin-bottom: var(--space-4);
+    font-weight: var(--weight-semibold);
+  }
+
+  .review-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: .8rem;
+    margin: var(--space-2) 0;
+    border: 1px solid var(--surface-container-high);
+    border-radius: var(--radius-sm);
+    background: var(--surface-container-lowest);
+    cursor: pointer;
+  }
+
+  .review-option input {
+    accent-color: var(--primary);
+  }
+
+  .review-incorrect {
+    color: var(--color-review-error);
+    margin-top: var(--space-4);
+  }
+
+  .lesson-saved {
+    background: var(--color-completed-surface);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .lesson-saved h3 {
+    margin-top: 0;
+  }
+
+  .lesson-next-links {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 767px) {
+    padding: 5rem var(--space-4) var(--space-4);
+    .lesson-header {
+      flex-direction: column;
+    }
+
+    .lesson-intro {
+      padding: var(--space-5);
+    }
+
+    .lesson-practice {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .chess-piece {
+      font-size: var(--text-chess-mobile);
+    }
+
+  }
+
 }

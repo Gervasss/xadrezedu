@@ -44,6 +44,6 @@ Referência: https://firebase.google.com/docs/rules/manage-deploy
 
 Com Node.js 24:
 
-`node --test tests/chessLessons.test.mjs tests/lessonProgress.test.mjs`
+`npm test`
 
-Os testes verificam todas as sequências, os mates, roque, promoção, en passant e os cálculos de progresso. Use também `npm run build` e `npm run lint`.
+Os testes usam Vitest e ficam em `test/`. Além das sequências, mates, roque, promoção, en passant e cálculos de progresso, cobrem todos os componentes React, os formulários com o hook de autenticação e a assinatura do progresso por usuário. As operações Firebase são simuladas; a suíte não valida as regras remotas. Use `npm run test:coverage` para gerar o relatório, `npm run test:watch` durante o desenvolvimento e execute também `npm run build` e `npm run lint`.
