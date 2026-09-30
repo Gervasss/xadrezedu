@@ -3,12 +3,14 @@ import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import { learningModules } from '../../data/curriculum';
 import { completedLessonIds } from '../../data/lessonProgress';
+import { progressErrorMessage } from '../../firebase/progressErrors';
 
 const knownIds = learningModules.flatMap((module) => module.lessons.map((lesson) => lesson.id));
 type ProgressState = {
   uid: string;
   status: 'loading' | 'ready' | 'error';
   completed: Set<string>;
+  error?: string;
 };
 
 // Assina o progresso confirmado do usuário e expõe estados de carregamento, erro e repetição.
@@ -31,7 +33,10 @@ export function useLessonProgress(uid: string) {
       });
       setState({ uid, status: 'ready', completed: completedLessonIds(records, knownIds) });
     },
-    () => setState({ uid, status: 'error', completed: new Set() }),
+    (error) => {
+      console.error('Falha ao consultar o progresso no Firestore:', error);
+      setState({ uid, status: 'error', completed: new Set(), error: progressErrorMessage(error) });
+    },
   ), [uid, attempt]);
 
   // Reinicia o estado e recria a assinatura para consultar o progresso novamente.

@@ -7,7 +7,7 @@ import { learningModules } from '../../data/curriculum';
 import { lessonContent } from './lessonContent';
 import InteractiveBoard from './InteractiveBoard';
 import DashboardHeader from '../../components/DashboardHeader/DashboardHeader';
-import { FirebaseError } from 'firebase/app';
+import { progressErrorMessage } from '../../firebase/progressErrors';
 import './LessonPage.css';
 
 // Resolve a lição pela rota e apresenta um estado de retorno para IDs desconhecidos.
@@ -70,13 +70,8 @@ function Lesson({ user, lessonId, title }: { user: User; lessonId: string; title
       });
       setSaved(true);
     } catch (error) {
-      if (error instanceof FirebaseError && error.code === 'permission-denied') {
-        setSaveError('O servidor não autorizou o acesso ao seu progresso. As permissões do projeto precisam ser corrigidas. Seus exercícios continuam resolvidos nesta tela.');
-      } else if (error instanceof FirebaseError && error.code === 'unauthenticated') {
-        setSaveError('Sua sessão expirou. Entre novamente para salvar o progresso.');
-      } else {
-        setSaveError('Não foi possível salvar sua conclusão. Verifique a conexão e tente novamente. Seus exercícios continuam resolvidos nesta tela.');
-      }
+      console.error('Falha ao salvar a conclusão no Firestore:', error);
+      setSaveError(`${progressErrorMessage(error)} Seus exercícios continuam resolvidos nesta tela.`);
     } finally {
       pending.current = false;
       setSaving(false);

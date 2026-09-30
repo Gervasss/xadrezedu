@@ -52,7 +52,7 @@ export default function HomePage({ user }: { user: User }) {
           </section>
 
           {progress.status === 'error' && <div className="session-error" role="alert">
-            <p>Não foi possível consultar suas conclusões. Tente novamente para atualizar os indicadores.</p>
+            <p>{progress.error ?? 'Não foi possível consultar suas conclusões. Tente novamente para atualizar os indicadores.'}</p>
             <button type="button" className="btn-retry" onClick={progress.retry}>Tentar novamente</button>
           </div>}
 
