@@ -140,12 +140,12 @@
   }
 
   .board-square.light {
-    background: var(--board-light);
+    background: var(--piece-light);
     color: var(--board-light-text);
   }
 
   .board-square.dark {
-    background: var(--board-dark);
+    background: var(--board-move-dot);
     color: var(--on-primary);
   }
 
